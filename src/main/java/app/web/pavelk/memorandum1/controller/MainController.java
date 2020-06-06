@@ -1,4 +1,4 @@
-package app.web.pavelk.memorandum1;
+package app.web.pavelk.memorandum1.controller;
 
 import app.web.pavelk.memorandum1.domain.Message;
 import app.web.pavelk.memorandum1.repos.MessageRepo;
@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
-public class GreetingController {
+public class MainController {
     @Autowired
     private MessageRepo messageRepo;
 
@@ -24,16 +23,16 @@ public class GreetingController {
         return "greeting";
     }
 
-    @GetMapping
-    public String main(Map<String, Object> model){
+    @GetMapping("/main")
+    public String main(Map<String, Object> model) {
         Iterable<Message> messages = messageRepo.findAll();
         model.put("some", "hello, PK!");
         model.put("messages", messages);
         return "main";
     }
 
-    @PostMapping
-    public String add(@RequestParam String text, @RequestParam String tag, Map<String, Object> model){
+    @PostMapping("/main")
+    public String add(@RequestParam String text, @RequestParam String tag, Map<String, Object> model) {
         Message message = new Message(text, tag);
 
         messageRepo.save(message);
@@ -45,14 +44,14 @@ public class GreetingController {
     }
 
     @PostMapping("filter")
-    public String filter(@RequestParam String filter, Map<String, Object> model){
+    public String filter(@RequestParam String filter, Map<String, Object> model) {
         Iterable<Message> messages2;
-        if (filter != null && !filter.isEmpty()){
+
+        if (filter != null && !filter.isEmpty()) {
             messages2 = messageRepo.findByTag(filter);
-        }else{
+        } else {
             messages2 = messageRepo.findAll();
         }
-
 
         model.put("some", "hello, filter!");
         model.put("messages", messages2);

@@ -8,8 +8,21 @@
     <title>Document</title>
 </head>
 <body>
+<div>{{some}} - some</div>
+<hr/>
+<a href="/main">main</a>
+<a href="/greeting">greeting</a>
+<a href="/">slash</a>
+<hr/>
 <div>
-    <p>Форма</p>
+    <form action="/logout" method="post">
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+<hr/>
+<div>
+    <div>Форма:</div>
     <form method="post">
         <label>
             text
@@ -19,15 +32,10 @@
             tag
             <input type="text" name="tag" placeholder="Tэг"/>
         </label>
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
         <button type="submit">Добавить</button>
-
     </form>
 </div>
-
-<hr/>
-<div>{{some}} ====</div>
-<p>Get your greeting <a href="/greeting">here</a></p>
-<p>Get your greeting <a href="/">here</a></p>
 <hr/>
 <div>
     <form method="post" action="filter">
@@ -35,13 +43,12 @@
             filter
             <input type="text" name="filter">
         </label>
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
         <button type="submit">Найти</button>
     </form>
-
 </div>
-<div>Список сообщений из базы postgres:</div>
-<div>
-    Shown.
+<div style="border: 3px solid #555">
+    <div>Список сообщений из базы postgres:</div>
     {{#messages}}
         <div>
             <b>{{id}}</b>
