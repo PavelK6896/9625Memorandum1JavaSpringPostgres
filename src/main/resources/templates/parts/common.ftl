@@ -3,7 +3,8 @@
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Sweater</title>
+        <title>Memorandum</title>
+        <link rel="stylesheet" href="/static/style.css">
     </head>
     <body>
     <#nested>
@@ -12,7 +13,7 @@
 </#macro>
 
 <#macro navbar>
-    <div>Hello, user</div>
+    <div>Hello, user /${name?if_exists}</div>
     <a href="/main">main</a>
     <a href="/login">login</a>
     <a href="/registration">registration</a>
