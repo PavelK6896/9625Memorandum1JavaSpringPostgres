@@ -6,6 +6,7 @@ import app.web.pavelk.memorandum1.repos.MessageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,53 +15,45 @@ import java.util.Map;
 
 @Controller
 public class MainController {
+
     @Autowired
     private MessageRepo messageRepo;
 
-    @GetMapping("/greeting")
-    public String greeting(
-            @RequestParam(name = "name", required = false, defaultValue = "World defaultValue or ?name=?") String name,
-            Map<String, Object> model) {
-        model.put("name", name);
+    @GetMapping("/")
+    public String greeting(Map<String, Object> model) {
         return "greeting";
     }
 
     @GetMapping("/main")
-    public String main(Map<String, Object> model) {
-        Iterable<Message> messages = messageRepo.findAll();
-        model.put("some", "hello, PK!");
-        model.put("messages", messages);
+    public String main(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
+        Iterable<Message> messages;
+
+        if (filter != null && !filter.isEmpty()) {
+            messages = messageRepo.findByTag(filter);
+        } else {
+            messages = messageRepo.findAll();
+        }
+
+        model.addAttribute("messages", messages);
+        model.addAttribute("filter", filter);
         return "main";
     }
 
     @PostMapping("/main")
     public String add(
+            @RequestParam(required = false, defaultValue = "") String filter,
             @AuthenticationPrincipal User user,
             @RequestParam String text,
-            @RequestParam String tag, Map<String, Object> model) {
+            @RequestParam String tag,
+            Map<String, Object> model) {
         Message message = new Message(text, tag, user);
 
         messageRepo.save(message);
         Iterable<Message> messages = messageRepo.findAll();
-        model.put("some", "hello, PostMapping!");
         model.put("messages", messages);
+        model.put("filter", filter);
 
         return "main";
     }
 
-    @PostMapping("filter")
-    public String filter(@RequestParam String filter, Map<String, Object> model) {
-        Iterable<Message> messages2;
-
-        if (filter != null && !filter.isEmpty()) {
-            messages2 = messageRepo.findByTag(filter);
-        } else {
-            messages2 = messageRepo.findAll();
-        }
-
-        model.put("some", "hello, filter!");
-        model.put("messages", messages2);
-
-        return "main";
-    }
 }
