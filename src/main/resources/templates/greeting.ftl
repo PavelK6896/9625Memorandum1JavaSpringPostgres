@@ -1,6 +1,7 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
-    <@c.navbar></@c.navbar>
+    <h3>Hi, guest!</h3>
+    <h4>This is.</h4>
 </@c.page>
 

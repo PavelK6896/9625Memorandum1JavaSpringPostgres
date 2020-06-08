@@ -1,7 +1,7 @@
 <#import "parts/common.ftl" as c>
 
 <@c.page>
-    <@c.navbar></@c.navbar>
+
     User editor
     <form action="/user" method="post">
 
