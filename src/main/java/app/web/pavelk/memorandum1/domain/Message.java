@@ -1,8 +1,10 @@
 package app.web.pavelk.memorandum1.domain;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Entity // This tells Hibernate to make a table out of this class
@@ -11,7 +13,10 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Please fill the massage")
+    @Length(max = 2048, message = "Message to long (more than 2kB)")
     private String text;
+    @Length(max = 255, message = "Message to long (more than 255)")
     private String tag;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -19,6 +24,7 @@ public class Message {
     private User author;
 
     private String filename;
+
     public Message() {
     }
 
@@ -28,7 +34,7 @@ public class Message {
         this.author = user;
     }
 
-    public String getAuthorName(){
+    public String getAuthorName() {
         return author != null ? author.getUsername() : "<none>";
     }
 
@@ -40,5 +46,7 @@ public class Message {
         this.filename = filename;
     }
 
-
+    public void setAuthor(User author) {
+        this.author = author;
+    }
 }
