@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService { // Подробност
     private void sendMessage(User user) {
         if (!StringUtils.isEmpty(user.getEmail())) {
             String message = String.format(
-                    " Hello, %s! \n Welcome! link: http://localhost:8080/activate/%s"
+                    " Hello, %s! \n Welcome! Please, visit next link: http://localhost:8080/activate/%s"
                     , user.getUsername()
                     , user.getActivationCode());
 
