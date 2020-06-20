@@ -3,6 +3,7 @@
 
 <@c.page>
     <h5>${username}</h5>
+    <h5>${email?if_exists}</h5>
     ${message?if_exists}
     <form method="post">
 

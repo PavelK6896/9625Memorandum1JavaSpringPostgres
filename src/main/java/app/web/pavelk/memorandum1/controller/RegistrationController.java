@@ -4,6 +4,7 @@ import app.web.pavelk.memorandum1.domain.User;
 import app.web.pavelk.memorandum1.domain.dto.CaptchaResponseDto;
 import app.web.pavelk.memorandum1.srvice.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -24,9 +25,8 @@ public class RegistrationController {
     @Autowired
     private UserService userService;
 
-    //    @Value("${recaptcha.secret}")
-//    private String secret;
-    private String secret = "";
+    @Value("${recaptcha.secret}")
+    private String secret;
 
     @Autowired
     private RestTemplate restTemplate;

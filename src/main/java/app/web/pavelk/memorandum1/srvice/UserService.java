@@ -4,6 +4,7 @@ import app.web.pavelk.memorandum1.domain.Role;
 import app.web.pavelk.memorandum1.domain.User;
 import app.web.pavelk.memorandum1.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,8 +17,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService { // Подробности
+
+    @Value("${hostname}")
+    private String hostname;
     //@Autowired
     private final UserRepo userRepo;
+
 
     public UserService(UserRepo userRepo) {
         this.userRepo = userRepo;
@@ -61,8 +66,11 @@ public class UserService implements UserDetailsService { // Подробност
     private void sendMessage(User user) {
         if (!StringUtils.isEmpty(user.getEmail())) {
             String message = String.format(
-                    " Hello, %s! \n Welcome! Please, visit next link: http://localhost:8080/activate/%s"
+                    " Hello, %s! \n Welcome! Please, visit next \n" +
+                            " link: <a href='http://%s/activate/%s'>activate</a> \n " +
+                            "--//==<a href='http://google.com'>google</a>--//=="
                     , user.getUsername()
+                    ,hostname
                     , user.getActivationCode());
 
             mailSender.send(user.getEmail(), "Activation code", message);
