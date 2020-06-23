@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -23,6 +24,10 @@ public class User implements UserDetails {
 //    @NotBlank(message = "Password confirmation cant be empty")
 //    private String password2;
 
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Message> messages;
+
     private boolean active;
     @Email(message = "Email is nit correct")
     @NotBlank(message = "Email cant be empty")
@@ -36,6 +41,19 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
     public User() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public boolean isAdmin() {
@@ -107,7 +125,6 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-
     public String getEmail() {
         return email;
     }
@@ -124,5 +141,11 @@ public class User implements UserDetails {
         this.activationCode = activationCode;
     }
 
+    public Set<Message> getMessages() {
+        return messages;
+    }
 
+    public void setMessages(Set<Message> messages) {
+        this.messages = messages;
+    }
 }

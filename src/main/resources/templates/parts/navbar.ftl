@@ -1,5 +1,7 @@
 <#include  "security.ftl">
 <#import "login.ftl" as l>
+
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="/">Memorandum</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -18,6 +20,15 @@
             <li class="nav-item">
                 <a class="nav-link" href="/registration">registration</a>
             </li>
+            <#--            сообщения если есть user только у авторизованных-->
+            <#if user??>
+                <li class="nav-item">
+                    <a class="nav-link" href="/main">Messages</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/user-messages/${currentUserId}">My messages</a>
+                </li>
+            </#if>
             <#if isAdmin>
                 <li class="nav-item">
                     <a class="nav-link" href="/user">user</a>
