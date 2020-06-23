@@ -63,4 +63,45 @@ public class UserController {
         return "redirect:/user/profile";
     }
 
+    @GetMapping("subscribe/{user}") // для подписки
+    public String subscribe(
+            @AuthenticationPrincipal User currentUser, //вытаскивает текущего пользователя из контекста
+            @PathVariable User user //получает из урла усера
+    ) {
+        userService.subscribe(currentUser, user);
+
+        return "redirect:/user-messages/" + user.getId(); //подписываеться на усира его ид в урл
+    }
+
+    @GetMapping("unsubscribe/{user}") // для отписок
+    public String unsubscribe(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable User user
+    ) {
+        userService.unsubscribe(currentUser, user);
+
+        return "redirect:/user-messages/" + user.getId();
+    }
+
+    //мапинг для страници подписок
+    //user - чьи
+    //list - для уникальности
+    @GetMapping("{type}/{user}/list")
+    public String userList(
+            Model model,
+            @PathVariable User user, // получает из урла
+            @PathVariable String type
+    ) {
+        model.addAttribute("userChannel", user);
+        model.addAttribute("type", type);
+
+        if ("subscriptions".equals(type)) { // либо подписщики либо подписки
+            model.addAttribute("users", user.getSubscriptions());
+        } else {
+            model.addAttribute("users", user.getSubscribers());
+        }
+
+        return "subscriptions"; // отобразили страницу с даными
+    }
+
 }

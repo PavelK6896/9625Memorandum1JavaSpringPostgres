@@ -139,4 +139,16 @@ public class UserService implements UserDetailsService { // Подробност
             sendMessage(user);
         }
     }
+
+    public void subscribe(User currentUser, User user) { // для подписки
+        user.getSubscribers().add(currentUser); // добавили усеру в подписщики текущего пользователя
+
+        userRepo.save(user); //сохранили
+    }
+
+    public void unsubscribe(User currentUser, User user) { //для отписки
+        user.getSubscribers().remove(currentUser);
+
+        userRepo.save(user);
+    }
 }

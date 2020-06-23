@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -27,6 +28,24 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Message> messages;
+
+    @ManyToMany
+    @JoinTable(//jpa связь таблиц
+            name = "user_subscriptions", //насзание таблицы
+            joinColumns = { @JoinColumn(name = "channel_id") }, //это канал
+            inverseJoinColumns = { @JoinColumn(name = "subscriber_id") } // подписщик
+    )
+    private Set<User> subscribers = new HashSet<>(); //список подписщиков
+
+
+    @ManyToMany
+    @JoinTable(//jpa связь таблиц
+            name = "user_subscriptions", //насзание таблицы
+            joinColumns = { @JoinColumn(name = "subscriber_id") }, //подпищик
+            inverseJoinColumns = { @JoinColumn(name = "channel_id") } //канал
+    )
+    private Set<User> subscriptions = new HashSet<>(); //список подписок
+
 
     private boolean active;
     @Email(message = "Email is nit correct")
@@ -147,5 +166,21 @@ public class User implements UserDetails {
 
     public void setMessages(Set<Message> messages) {
         this.messages = messages;
+    }
+
+    public Set<User> getSubscribers() {
+        return subscribers;
+    }
+
+    public void setSubscribers(Set<User> subscribers) {
+        this.subscribers = subscribers;
+    }
+
+    public Set<User> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(Set<User> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 }

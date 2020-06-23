@@ -40,7 +40,10 @@
                 </li>
             </#if>
         </ul>
-        <div class="navbar-text mr-3">${name}</div>
+
+
+<#--        надпись перед кнопкой -->
+        <div class="navbar-text mr-3"><#if user??>${name}<#else>Please, login</#if></div>
         <@l.logout></@l.logout>
     </div>
 </nav>

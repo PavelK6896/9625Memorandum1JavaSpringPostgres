@@ -109,6 +109,13 @@ public class MainController {
     ) {
         Set<Message> messages = user.getMessages();//взяли сообщения user
 
+        model.addAttribute("userChannel", user); // весь пользователь (и имя) текущего поля в контекст
+
+        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
+        model.addAttribute("subscribersCount", user.getSubscribers().size());
+
+        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser)); // проверка на подписку
+
         model.addAttribute("messages", messages);//сообщения пользователя
         model.addAttribute("message", message);//переменая из базы данных//инжект или проводка
         model.addAttribute("isCurrentUser", currentUser.equals(user));//собственные сообщенияя
