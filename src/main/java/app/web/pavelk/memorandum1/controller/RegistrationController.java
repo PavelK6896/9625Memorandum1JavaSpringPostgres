@@ -65,7 +65,7 @@ public class RegistrationController {
             model.addAllAttributes(errors);
             return "registration";
         }
-        if (!userService.addUser(user)) {
+        if (!userService.addUser(user)) {//добовляем нового усера
             model.addAttribute("usernameError", "User exists!существует!");
             return "registration";
         }

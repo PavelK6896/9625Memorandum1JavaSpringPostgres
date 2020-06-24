@@ -38,7 +38,6 @@ public class UserService implements UserDetailsService { // Подробност
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(s);
         if (user == null) {
-
             throw new UsernameNotFoundException("User not found");
         }
 
@@ -56,6 +55,7 @@ public class UserService implements UserDetailsService { // Подробност
         user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userRepo.save(user);
 
         sendMessage(user);
@@ -64,7 +64,8 @@ public class UserService implements UserDetailsService { // Подробност
     }
 
     private void sendMessage(User user) {
-        if (!StringUtils.isEmpty(user.getEmail())) {
+        if (!StringUtils.isEmpty(user.getEmail())) { // проверить пустая ли строка
+
             String message = String.format(
                     " Hello, %s! \n Welcome! Please, visit next \n" +
                             " link: <a href='http://%s/activate/%s'>activate</a> \n " +
@@ -73,7 +74,7 @@ public class UserService implements UserDetailsService { // Подробност
                     ,hostname
                     , user.getActivationCode());
 
-            mailSender.send(user.getEmail(), "Activation code", message);
+            mailSender.send1(user.getEmail(), "Activation code", message);
         }
     }
 
