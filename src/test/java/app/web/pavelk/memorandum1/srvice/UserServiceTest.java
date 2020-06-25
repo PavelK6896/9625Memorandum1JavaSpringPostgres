@@ -19,7 +19,7 @@ import java.util.Collections;
 
 @RunWith(SpringRunner.class)//окружение стартует тесты
 @SpringBootTest
-//запускает собирает спринг апп
+        //запускает собирает спринг апп
 class UserServiceTest {
 
     @Autowired//тестируеммый класс

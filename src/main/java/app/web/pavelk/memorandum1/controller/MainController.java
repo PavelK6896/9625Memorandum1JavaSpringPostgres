@@ -2,7 +2,9 @@ package app.web.pavelk.memorandum1.controller;
 
 import app.web.pavelk.memorandum1.domain.Message;
 import app.web.pavelk.memorandum1.domain.User;
+import app.web.pavelk.memorandum1.domain.dto.MessageDto;
 import app.web.pavelk.memorandum1.repos.MessageRepo;
+import app.web.pavelk.memorandum1.srvice.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -14,11 +16,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.io.File;
@@ -29,6 +31,9 @@ import java.util.UUID;
 
 @Controller
 public class MainController {
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     private MessageRepo messageRepo;
@@ -47,16 +52,14 @@ public class MainController {
                     defaultValue = "") String filter,
             Model model,
             //сортировка поубыванию по id
-            @PageableDefault(sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
+            @AuthenticationPrincipal User user
 
     ) {
-        Page<Message> page;
 
-        if (filter != null && !filter.isEmpty()) {
-            page = messageRepo.findByTag(filter, pageable);
-        } else {
-            page = messageRepo.findAll(pageable);
-        }
+        Page<MessageDto> page = messageService.messageList(pageable, filter, user);
+
+
 
 
         model.addAttribute("page", page);//страница
@@ -111,28 +114,30 @@ public class MainController {
         }
     }
 
-    @GetMapping("/user-messages/{user}")//урл ответа
+    @GetMapping("/user-messages/{author}")//урл ответа
     public String userMessges(
             @AuthenticationPrincipal User currentUser,//берет из сесии текущего пользователя
-            @PathVariable User user,//запрос из сигнатуры анотации
+            @PathVariable User author,//запрос из сигнатуры анотации
             Model model,//ответ
-            @RequestParam(required = false) Message message//берет из гет запроса
+            @RequestParam(required = false) Message message,//берет из гет запроса
             // ходит в базу даных и ложет в переменную
             // interface repos.MessageRepo
             //required = false пораметор необязателен
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Set<Message> messages = user.getMessages();//взяли сообщения user
+        Page<MessageDto> page = messageService.messageListForUser(pageable, currentUser, author);//взяли сообщения user
 
-        model.addAttribute("userChannel", user); // весь пользователь (и имя) текущего поля в контекст
+        model.addAttribute("userChannel", author); // весь пользователь (и имя) текущего поля в контекст
 
-        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
-        model.addAttribute("subscribersCount", user.getSubscribers().size());
+        model.addAttribute("subscriptionsCount", author.getSubscriptions().size());
+        model.addAttribute("subscribersCount", author.getSubscribers().size());
 
-        model.addAttribute("isSubscriber", user.getSubscribers().contains(currentUser)); // проверка на подписку
+        model.addAttribute("isSubscriber", author.getSubscribers().contains(currentUser)); // проверка на подписку
 
-        model.addAttribute("messages", messages);//сообщения пользователя
+        model.addAttribute("page", page);//сообщения пользователя
         model.addAttribute("message", message);//переменая из базы данных//инжект или проводка
-        model.addAttribute("isCurrentUser", currentUser.equals(user));//собственные сообщенияя
+        model.addAttribute("isCurrentUser", currentUser.equals(author));//собственные сообщенияя
+        model.addAttribute("url", "/user-messages/" + author.getId());
 
         return "userMessages";
     }
@@ -162,5 +167,30 @@ public class MainController {
         return "redirect:/user-messages/" + user;
     }
 
+    @GetMapping("/messages/{message}/like") //акшон для лайков
+    public String like(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Message message,
+            RedirectAttributes redirectAttributes,//параметры
+            @RequestHeader(required = false) String referer // понимает откуда мы пришли
+    ) {
+        Set<User> likes = message.getLikes();
+
+        if (likes.contains(currentUser)) { // значит лай существует
+            likes.remove(currentUser);
+        } else {
+            likes.add(currentUser);
+        }
+
+        //нужно чтобы все вернулось как было
+        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+
+        components.getQueryParams()
+                .entrySet()
+                .forEach(pair -> redirectAttributes.addAttribute(pair.getKey(), pair.getValue()));
+        //////////////////
+
+        return "redirect:" + components.getPath();
+    }
 
 }

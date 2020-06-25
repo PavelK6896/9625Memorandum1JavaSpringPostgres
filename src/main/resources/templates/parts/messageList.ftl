@@ -16,18 +16,29 @@
                 <i>#${message.tag}</i>
 
             </div>
-            <div class="card-footer text-muted">
-                <#--                переход на конал пользователя-->
-                <a href="/user-messages/${message.author.id}">${message.authorName} </a>
-                <#--                проверка кому пренадлежит сообщение-->
-                <#if message.author.id == currentUserId>
-                <#--                    редактировать собственные сообщения по ид-->
-<#--                    гиперсылка и идентификатор сообщения-->
-                    <a class="btn btn-primary" href="/user-messages/${message.author.id}?message=${message.id}">
-                        Edit
+            <div class="card-footer text-muted container">
+                <div class="row">
+                    <#--                переход на конал пользователя-->
+                    <a class="col align-self-center" href="/user-messages/${message.author.id}">${message.authorName} </a>
+                    <#--                проверка кому пренадлежит сообщение-->
+<#--                    правильный запрос на лайки-->
+                    <a class="col align-self-center" href="/messages/${message.id}/like">
+                        <#if message.meLiked>
+                            <i class="fas fa-heart"></i>
+                        <#else>
+                            <i class="far fa-heart"></i>
+                        </#if>
+                        ${message.likes}
                     </a>
+                    <#if message.author.id == currentUserId>
+                    <#--                    редактировать собственные сообщения по ид-->
+                    <#--                    гиперсылка и идентификатор сообщения-->
+                        <a class="col btn btn-primary" href="/user-messages/${message.author.id}?message=${message.id}">
+                            Edit
+                        </a>
 
-                </#if>
+                    </#if>
+                </div>
             </div>
         </div>
     <#else>
