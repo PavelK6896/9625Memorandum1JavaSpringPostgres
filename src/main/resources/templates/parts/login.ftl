@@ -45,7 +45,7 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Email:</label>
                 <div class="col-sm-6">
-                    <input type="email" name="email" value="<#if user??>${user.email}</#if>"
+                    <input type="email" name="email" value="<#if user??>${user.email?if_exists}</#if>"
                            class="form-control ${(emailError??)?string('is-invalid', '')}"
                            placeholder="some@some.com"/>
                     <#if emailError??>
@@ -65,8 +65,8 @@
             </div>
 
         </#if>
-        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
         <#if !isRegisterForm><a href="/registration">Add new user</a></#if>
+        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
         <button class="btn btn-primary" type="submit"><#if isRegisterForm>Create<#else>Sign In</#if></button>
     </form>
 </#macro>
